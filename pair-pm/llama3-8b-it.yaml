@@ -1,4 +1,4 @@
-base_model: /home/wx/axtool/models/llama3_it_with_padding_token
+base_model: ~/llama_model
 model_type: AutoModelForCausalLM
 tokenizer_type: AutoTokenizer
 
@@ -15,7 +15,7 @@ datasets:
 
 warmup_steps: 40
 val_set_size: 0.0
-output_dir: ./pm_models/llama3-8b-it_bs128_lr1e-5
+output_dir: ./output
 #wandb_project: preference-models
 #wandb_entity: domain-generalization
 wandb_watch:
@@ -26,7 +26,7 @@ train_on_inputs: false
 
 save_safetensors: true
 #noisy_embedding_alpha: 10.0 # default for sharegpt type
-dataset_prepared_path: ~/data/preference-models/last_run_prepared
+dataset_prepared_path: ~/prepare
 
 
 dataset_processes: 48
