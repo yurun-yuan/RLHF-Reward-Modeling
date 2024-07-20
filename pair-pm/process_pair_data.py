@@ -1,6 +1,7 @@
 from datasets import load_dataset, Dataset, concatenate_datasets, DatasetDict
 from transformers import AutoTokenizer
 import numpy as np
+import os
 
 # All the datasets should be pre-processed into standard format.
 all_dirs = [
@@ -79,4 +80,4 @@ else:
 combined_dataset = combined_dataset.shuffle(seed=42)
 
 
-DatasetDict({'train': combined_dataset}).push_to_hub("You own hf dir")
+DatasetDict({'train': combined_dataset}).push_to_hub(os.environ['HF_DATASET_ID'])
