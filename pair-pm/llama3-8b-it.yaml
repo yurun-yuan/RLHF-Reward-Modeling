@@ -15,7 +15,7 @@ datasets:
 
 warmup_steps: 40
 val_set_size: 0.0
-output_dir: ./output
+output_dir: ~/output
 #wandb_project: preference-models
 #wandb_entity: domain-generalization
 wandb_watch:
