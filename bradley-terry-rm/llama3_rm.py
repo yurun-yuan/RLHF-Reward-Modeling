@@ -21,7 +21,7 @@ from transformers import (
 )
 from transformers.utils import PaddingStrategy
 
-
+NUM_PROC = 4
 
 
 # Define and parse arguments.
@@ -112,7 +112,7 @@ print("tokenizer.pad_token ", tokenizer.pad_token, "tokenizer.pad_token_id", tok
 tokenizer.pad_token = tokenizer.eos_token
 tokenizer.pad_token_id = tokenizer.eos_token_id
 tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-print(tokenizer.padding_side)
+print("tokenizer.padding_side", tokenizer.padding_side)
 tokenizer.truncation_side = "left"
 tokenizer.model_max_length = script_args.max_length
 # tokenizer.padding_side = "right"
@@ -142,7 +142,7 @@ def build_dataset(tokenizer, train_path, eval_path):
 
     ds = load_dataset(train_path, split="train").shuffle(seed=42)
     #ds = ds.select(range(2000))
-    ds = ds.map(tokenize, num_proc=8)
+    ds = ds.map(tokenize, num_proc=NUM_PROC)
 
     eval_dataset = None
 
@@ -185,15 +185,22 @@ training_args = TrainingArguments(
     report_to='wandb'
 )
 
+print(
+    "training_args",
+    training_args,
+)
+
 model = AutoModelForSequenceClassification.from_pretrained(
-    script_args.model_name, num_labels=1, torch_dtype=torch.bfloat16, use_flash_attention_2=True,
+    script_args.model_name, num_labels=1, torch_dtype=torch.bfloat16, attn_implementation="flash_attention_2",
 )
 
 model.config.use_cache = not script_args.gradient_checkpointing
 model.config.pad_token_id = tokenizer.pad_token_id
 model.resize_token_embeddings(len(tokenizer))
 
-num_proc = 24  # Can adjust to be higher if you have more processors.
+print(model.config)
+
+num_proc = NUM_PROC  # Can adjust to be higher if you have more processors.
 original_columns = train_dataset.column_names
 
 
@@ -272,7 +279,7 @@ trainer = RewardTrainer(
     eval_dataset=eval_dataset,
     compute_metrics=compute_metrics,
     data_collator=RewardDataCollatorWithPadding(
-        tokenizer=tokenizer, max_length=script_args.max_length),
+        tokenizer=tokenizer, max_length=script_args.max_length, padding='max_length'),
 )
 
 
