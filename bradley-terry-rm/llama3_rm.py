@@ -108,8 +108,9 @@ tokenizer = AutoTokenizer.from_pretrained(tokenizer_name, use_fast = False)
 
 # Adjusted according to the base model
 # Need to do this for the models that don't have an official pad token.
-#tokenizer.pad_token = tokenizer.eos_token
-#tokenizer.pad_token_id = tokenizer.eos_token_id
+print("tokenizer.pad_token ", tokenizer.pad_token, "tokenizer.pad_token_id", tokenizer.pad_token_id)
+tokenizer.pad_token = tokenizer.eos_token
+tokenizer.pad_token_id = tokenizer.eos_token_id
 tokenizer.add_special_tokens({'pad_token': '[PAD]'})
 print(tokenizer.padding_side)
 tokenizer.truncation_side = "left"
