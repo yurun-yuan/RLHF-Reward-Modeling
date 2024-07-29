@@ -69,6 +69,10 @@ class ScriptArguments:
         default="hendrydong/preference_700K",
         metadata={"help": "The dir of the subset of the eval data to use"},
     )
+    local_model_path: Optional[str] = field(
+        default=None,
+        metadata={"help": "Path to the pretrained model. Used if not none to initialize pretrained model"},
+    )
     output_path: Optional[str] = field(
         default="./models/llama3_rm_test",
         metadata={"help": "The dir for output model"},
@@ -165,7 +169,7 @@ print(
 )
 
 model = AutoModelForSequenceClassification.from_pretrained(
-    '/staging/yyuan244/llama31_pretrain', num_labels=1, torch_dtype=torch.bfloat16, attn_implementation="flash_attention_2",
+    script_args.model_name if script_args.local_model_path is None else script_args.local_model_path, num_labels=1, torch_dtype=torch.bfloat16, attn_implementation="flash_attention_2",
 )
 
 model.config.use_cache = not script_args.gradient_checkpointing
