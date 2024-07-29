@@ -165,7 +165,7 @@ print(
 )
 
 model = AutoModelForSequenceClassification.from_pretrained(
-    script_args.model_name, num_labels=1, torch_dtype=torch.bfloat16, attn_implementation="flash_attention_2",
+    '/staging/yyuan244/llama31_pretrain', num_labels=1, torch_dtype=torch.bfloat16, attn_implementation="flash_attention_2",
 )
 
 model.config.use_cache = not script_args.gradient_checkpointing
