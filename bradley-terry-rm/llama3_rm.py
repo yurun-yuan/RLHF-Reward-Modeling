@@ -46,7 +46,7 @@ class ScriptArguments:
     learning_rate: Optional[float] = field(default=2e-6)
     weight_decay: Optional[float] = field(default=0.001)
     model_name: Optional[str] = field(
-        default="meta-llama/Meta-Llama-3-8B-Instruct",
+        default="meta-llama/Meta-Llama-3.1-8B-Instruct",
         metadata={
             "help": "The model that you want to train from the Hugging Face hub. E.g. gpt2, gpt2-xl, bert, etc."
         },
@@ -68,6 +68,10 @@ class ScriptArguments:
     eval_set_path: Optional[str] = field(
         default="hendrydong/preference_700K",
         metadata={"help": "The dir of the subset of the eval data to use"},
+    )
+    local_model_path: Optional[str] = field(
+        default=None,
+        metadata={"help": "Path to the pretrained model. Used if not none to initialize pretrained model"},
     )
     output_path: Optional[str] = field(
         default="./models/llama3_rm_test",
@@ -191,7 +195,7 @@ print(
 )
 
 model = AutoModelForSequenceClassification.from_pretrained(
-    script_args.model_name, num_labels=1, torch_dtype=torch.bfloat16, attn_implementation="flash_attention_2",
+    script_args.model_name if script_args.local_model_path is None else script_args.local_model_path, num_labels=1, torch_dtype=torch.bfloat16, attn_implementation="flash_attention_2",
 )
 
 model.config.use_cache = not script_args.gradient_checkpointing
