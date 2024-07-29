@@ -7,19 +7,12 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Union
 
 # import evaluate
-import numpy as np
-import torch
-import torch.nn as nn
 from datasets import load_dataset
 # from peft import LoraConfig, TaskType, get_peft_model
 from transformers import (
-    AutoModelForSequenceClassification,
     AutoTokenizer,
     HfArgumentParser,
-    Trainer,
-    TrainingArguments,
 )
-from transformers.utils import PaddingStrategy
 
 NUM_PROC = 4
 
