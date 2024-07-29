@@ -219,6 +219,7 @@ class RewardDataCollatorWithPadding:
             "attention_mask": batch["attention_mask"],
             "return_loss": True,
         }
+        print(f'DataCollator batch {batch}')
         return batch
 
 
