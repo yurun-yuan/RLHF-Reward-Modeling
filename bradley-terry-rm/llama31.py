@@ -219,7 +219,7 @@ class RewardDataCollatorWithPadding:
             "attention_mask": batch["attention_mask"],
             "return_loss": True,
         }
-        print(f'DataCollator batch {batch}')
+        print('DataCollator batch {}. Input_id shape{}, att_mask shape{}'.format(batch, batch['input_ids'].shape, batch['attention_mask'].shape))
         return batch
 
 
