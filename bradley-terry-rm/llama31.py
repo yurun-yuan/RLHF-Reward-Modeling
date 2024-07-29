@@ -108,7 +108,7 @@ tokenizer = AutoTokenizer.from_pretrained(tokenizer_name, use_fast = False)
 
 # Adjusted according to the base model
 # Need to do this for the models that don't have an official pad token.
-print("tokenizer.pad_token ", tokenizer.pad_token, "tokenizer.pad_token_id", tokenizer.pad_token_id)
+print("tokenizer.pad_token", tokenizer.pad_token, "tokenizer.pad_token_id", tokenizer.pad_token_id)
 tokenizer.pad_token = tokenizer.eos_token
 tokenizer.pad_token_id = tokenizer.eos_token_id
 tokenizer.add_special_tokens({'pad_token': '[PAD]'})
@@ -124,36 +124,8 @@ train_path = script_args.train_set_path
 eval_path = script_args.eval_set_path
 output_name = script_args.output_path
 
-
-def build_dataset(tokenizer, train_path, eval_path):
-
-    def tokenize(sample):
-        sample['positive'] = tokenizer.apply_chat_template(
-            sample['chosen'], tokenize=False, add_generation_prompt=False).replace(tokenizer.bos_token, "")
-        sample['negative'] = tokenizer.apply_chat_template(
-            sample['rejected'], tokenize=False, add_generation_prompt=False).replace(tokenizer.bos_token, "")
-        tokenized_pos = tokenizer(sample['positive'], truncation=True)
-        tokenized_neg = tokenizer(sample['negative'], truncation=True)
-        sample["input_ids_j"] = tokenized_pos["input_ids"]
-        sample["attention_mask_j"] = tokenized_pos["attention_mask"]
-        sample["input_ids_k"] = tokenized_neg["input_ids"]
-        sample["attention_mask_k"] = tokenized_neg["attention_mask"]
-        return sample
-
-    ds = load_dataset(train_path, split="train").shuffle(seed=42)
-    #ds = ds.select(range(2000))
-    ds = ds.map(tokenize, num_proc=NUM_PROC)
-
-    eval_dataset = None
-
-    train_dataset = ds
-    #eval_dataset = load_dataset(eval_path, split="train").shuffle(seed=42).select(range(500))
-    eval_dataset = ds.select(range(500))
-    return train_dataset, eval_dataset
-
-
-train_dataset, eval_dataset = build_dataset(tokenizer, train_path, eval_path)
-train_dataset = train_dataset[:2]
+train_dataset = load_dataset('RyanYr/preference_700K_llama31_tokenized', split="train")
+eval_dataset = train_dataset.select(range(500))
 print(train_dataset)
 print("Training set: ", len(train_dataset), " Eval set: ", len(eval_dataset))
 
