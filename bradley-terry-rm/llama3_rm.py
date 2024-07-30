@@ -113,10 +113,19 @@ class ScriptArguments:
         default=999999,
         metadata={"help": "Eval the model every x steps"},
     )
-
+    save_total_limit: Optional[int] = field(
+        default=None,
+        metadata={"help": "Limit the total amount of checkpoints."},
+    )
+    torch_random_seed: Optional[int] = field(
+        default=0,
+        metadata={"help": "The random seed for torch"},
+    )
 
 parser = HfArgumentParser(ScriptArguments)
 script_args = parser.parse_args_into_dataclasses()[0]
+
+torch.manual_seed(script_args.torch_random_seed)
 
 # Load the value-head model and tokenizer.
 tokenizer_name = script_args.model_name
@@ -162,6 +171,7 @@ training_args = TrainingArguments(
     push_to_hub=script_args.push_to_hub,
     hub_model_id=script_args.hub_model_id,
     hub_token=script_args.hub_token,
+    save_total_limit=script_args.save_total_limit,
     gradient_accumulation_steps=script_args.gradient_accumulation_steps,
     gradient_checkpointing=script_args.gradient_checkpointing,
     deepspeed=script_args.deepspeed,
