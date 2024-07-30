@@ -284,4 +284,7 @@ trainer.save_model(output_name + "/last_checkpoint")
 tokenizer.save_pretrained(output_name + "/last_checkpoint")
 
 if script_args.push_to_hub:
-    trainer.push_to_hub()
+    try:
+        trainer.push_to_hub()
+    except Exception as e:
+        print(f'Failed to push to hub: {e}')
