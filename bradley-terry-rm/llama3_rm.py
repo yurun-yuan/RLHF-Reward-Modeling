@@ -97,6 +97,18 @@ class ScriptArguments:
         default=999999,
         metadata={"help": "Save the model every x steps"},
     )
+    push_to_hub: Optional[bool] = field(
+        default=False,
+        metadata={"help": "Enables pushing checkpointing."},
+    )
+    hub_model_id: Optional[str] = field(
+        default=None,
+        metadata={"help": "Model ID on the Hugging Face Hub"},
+    )
+    hub_token: Optional[str] = field(
+        default=None,
+        metadata={"help": "Your Hugging Face token"},
+    )
     eval_every_steps: Optional[int] = field(
         default=999999,
         metadata={"help": "Eval the model every x steps"},
@@ -147,6 +159,9 @@ training_args = TrainingArguments(
     eval_steps=script_args.eval_every_steps,
     save_strategy="steps",
     save_steps=script_args.save_every_steps,
+    push_to_hub=script_args.push_to_hub,
+    hub_model_id=script_args.hub_model_id,
+    hub_token=script_args.hub_token,
     gradient_accumulation_steps=script_args.gradient_accumulation_steps,
     gradient_checkpointing=script_args.gradient_checkpointing,
     deepspeed=script_args.deepspeed,
@@ -155,7 +170,7 @@ training_args = TrainingArguments(
     label_names=[],
     bf16=script_args.bf16,
     logging_strategy="steps",
-    logging_steps=10,
+    logging_steps=3,
     optim=script_args.optim,
     lr_scheduler_type=script_args.lr_scheduler_type,
     warmup_ratio=0.03,
@@ -267,3 +282,6 @@ print("Saving last checkpoint of the model")
 #model.save_pretrained(output_name + "/last_checkpoint")
 trainer.save_model(output_name + "/last_checkpoint")
 tokenizer.save_pretrained(output_name + "/last_checkpoint")
+
+if script_args.push_to_hub:
+    trainer.push_to_hub()
