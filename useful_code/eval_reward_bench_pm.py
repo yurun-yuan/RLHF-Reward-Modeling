@@ -22,7 +22,8 @@ class ScriptArguments:
         default="./bench_mark_eval.txt",
         metadata={"help": "the location of the output file"},
     )
-    preference_name_or_path: str = field(
+    preference_name_or_path: Optional[str] = field(
+        default="",
         metadata={"help": "the name of the gold reward model"},
     )
     tokenizer_name: Optional[str] = field(
