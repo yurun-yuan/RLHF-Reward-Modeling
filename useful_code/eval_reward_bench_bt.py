@@ -26,17 +26,20 @@ class ScriptArguments:
         default="sfairXC/FsfairX-LLaMA3-RM-v0.1",
         metadata={"help": "the name of the gold reward model"},
     )
+    tokenizer_name: Optional[str] = field(
+        default="sfairXC/FsfairX-LLaMA3-RM-v0.1",
+        metadata={"help": "the name of the tokenizer"},
+    )
 
 
 parser = HfArgumentParser(ScriptArguments)
 script_args = parser.parse_args_into_dataclasses()[0]
 
 ds_dir = script_args.data_set_name
-record_dir = script_args.record_dir 
-
+record_dir = script_args.record_dir
 
 rm_name = script_args.reward_name_or_path
-rm_tokenizer = AutoTokenizer.from_pretrained(rm_name)
+rm_tokenizer = AutoTokenizer.from_pretrained(rm_name if script_args.tokenizer_name is None else script_args.tokenizer_name)
 device = 0
 
 rm_pipe = pipeline(
