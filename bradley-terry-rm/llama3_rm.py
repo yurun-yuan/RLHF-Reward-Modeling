@@ -91,7 +91,7 @@ class ScriptArguments:
         default="cosine",
         metadata={"help": "The lr scheduler"},
     )
-    # max_length: Optional[int] = field(default=4096)
+    max_length: Optional[int] = field(default=4096)
 
     save_every_steps: Optional[int] = field(
         default=999999,
@@ -139,7 +139,7 @@ tokenizer.pad_token_id = tokenizer.eos_token_id
 tokenizer.add_special_tokens({'pad_token': '[PAD]'})
 print("tokenizer.padding_side", tokenizer.padding_side)
 tokenizer.truncation_side = "left"
-# tokenizer.model_max_length = script_args.max_length
+tokenizer.model_max_length = script_args.max_length
 # tokenizer.padding_side = "right"
 
 
@@ -213,7 +213,7 @@ original_columns = train_dataset.column_names
 class RewardDataCollatorWithPadding:
     tokenizer: AutoTokenizer
     padding: Union[bool, str, PaddingStrategy] = True
-    # max_length: Optional[int] = None
+    max_length: Optional[int] = None
     pad_to_multiple_of: Optional[int] = None
     return_tensors: str = "pt"
 
@@ -236,7 +236,7 @@ class RewardDataCollatorWithPadding:
         batch = self.tokenizer.pad(
             merged_features,
             padding=self.padding,
-            # max_length=self.max_length,
+            max_length=self.max_length,
             pad_to_multiple_of=self.pad_to_multiple_of,
             return_tensors=self.return_tensors,
         )
@@ -294,7 +294,7 @@ trainer = RewardTrainer(
     compute_metrics=compute_metrics,
     data_collator=RewardDataCollatorWithPadding(
         tokenizer=tokenizer, 
-        # max_length=script_args.max_length, 
+        max_length=script_args.max_length, 
         padding='max_length'),
 )
 
