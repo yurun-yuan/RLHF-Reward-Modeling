@@ -198,9 +198,10 @@ model = AutoModelForSequenceClassification.from_pretrained(
 
 model.config.use_cache = not script_args.gradient_checkpointing
 model.config.pad_token_id = tokenizer.pad_token_id
-
 vocab_size = len(tokenizer)
 print(f"vocab_size\t{vocab_size}")
+model.config.vocab_size = len(vocab_size)
+print("model.config.vocab_size\t{}".format(model.config.vocab_size))
 # TODO
 model.resize_token_embeddings(128257)
 
