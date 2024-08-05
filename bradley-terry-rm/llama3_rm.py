@@ -265,6 +265,8 @@ class RewardTrainer(Trainer):
         print("iteration: ", self.debug_counter)
         self.debug_counter += 1
 
+        print(f"input_ids\t{inputs["input_ids"].shape}")
+        print(f"attention_mask\t{inputs["attention_mask"].shape}")
         print(inputs)
         
         rewards = model(
