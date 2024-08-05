@@ -22,9 +22,16 @@ class ScriptArguments:
         default="./bench_mark_eval.txt",
         metadata={"help": "the location of the output file"},
     )
-    preference_name_or_path: Optional[str] = field(
-        default="/home/cyeab/axtool/models/llama8b_it_data_henrydong/checkpoint-1308",
+    preference_name_or_path: str = field(
         metadata={"help": "the name of the gold reward model"},
+    )
+    tokenizer_name: Optional[str] = field(
+        default=None,
+        metadata={"help": "the name of the tokenizer"},
+    )
+    tokenizer_plain_name: Optional[str] = field(
+        default=None,
+        metadata={"help": "the name of the tokenizer"},
     )
 
 
@@ -38,8 +45,11 @@ device = 0
 
 model = AutoModelForCausalLM.from_pretrained(script_args.preference_name_or_path,
                                              torch_dtype=torch.bfloat16, attn_implementation="flash_attention_2").cuda()
-tokenizer = AutoTokenizer.from_pretrained("/home/cyeab/axtool/models/llama3_it_427_update", use_fast=True)
-tokenizer_plain = AutoTokenizer.from_pretrained("/home/cyeab/axtool/models/llama3_it_427_update", use_fast=True)
+tokenizer_name = script_args.preference_name_or_path if script_args.tokenizer_name is None else script_args.tokenizer_name
+tokenizer = AutoTokenizer.from_pretrained(tokenizer_name, use_fast=True)
+
+tokenizer_plain_name = tokenizer_name if script_args.tokenizer_plain_name is None else script_args.tokenizer_plain_name
+tokenizer_plain = AutoTokenizer.from_pretrained(tokenizer_plain_name, use_fast=True)
 tokenizer_plain.chat_template = "\n{% for message in messages %}{% if loop.index0 % 2 == 0 %}\n\n<turn> user\n {{ message['content'] }}{% else %}\n\n<turn> assistant\n {{ message['content'] }}{% endif %}{% endfor %}\n\n\n"
 
 prompt_template = "[CONTEXT] {context} [RESPONSE A] {response_A} [RESPONSE B] {response_B} \n"
