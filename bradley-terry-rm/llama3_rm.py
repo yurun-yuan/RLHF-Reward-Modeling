@@ -258,15 +258,18 @@ def compute_metrics(eval_pred):
 
 
 class RewardTrainer(Trainer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        debug_counter = 0
     def compute_loss(self, model, inputs, return_outputs=False):
-        try:
-            rewards = model(
-                input_ids=inputs["input_ids"], attention_mask=inputs["attention_mask"]
-            )[0]
-        except Exception as e:
-            print(e)
-            print(inputs)
-            raise e
+        print("iteration: ", self.debug_counter)
+        self.debug_counter += 1
+        
+        print(inputs)
+        
+        rewards = model(
+            input_ids=inputs["input_ids"], attention_mask=inputs["attention_mask"]
+        )[0]
         bsz = rewards.size(0)
         jidx = torch.arange(0, bsz, 2)
         kidx = jidx + 1
