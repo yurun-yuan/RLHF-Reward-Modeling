@@ -198,7 +198,11 @@ model = AutoModelForSequenceClassification.from_pretrained(
 
 model.config.use_cache = not script_args.gradient_checkpointing
 model.config.pad_token_id = tokenizer.pad_token_id
-model.resize_token_embeddings(len(tokenizer))
+
+vocab_size = len(tokenizer)
+print(f"vocab_size\t{vocab_size}")
+# TODO
+model.resize_token_embeddings(128257)
 
 print(model.config)
 
