@@ -260,11 +260,11 @@ def compute_metrics(eval_pred):
 class RewardTrainer(Trainer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        debug_counter = 0
+        self.debug_counter = 0
     def compute_loss(self, model, inputs, return_outputs=False):
         print("iteration: ", self.debug_counter)
         self.debug_counter += 1
-        
+
         print(inputs)
         
         rewards = model(
