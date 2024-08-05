@@ -198,15 +198,11 @@ model = AutoModelForSequenceClassification.from_pretrained(
 
 model.config.use_cache = not script_args.gradient_checkpointing
 model.config.pad_token_id = tokenizer.pad_token_id
-vocab_size = len(tokenizer)
-print(f"vocab_size\t{vocab_size}")
-model.config.vocab_size = vocab_size
-print("model.config.vocab_size\t{}".format(model.config.vocab_size))
-# TODO
-model.resize_token_embeddings(128257)
+
+# Need transformers>=4.43.4
+model.resize_token_embeddings(len(tokenizer))
 
 print(model.config)
-model.config.vocab_size = vocab_size
 
 num_proc = NUM_PROC  # Can adjust to be higher if you have more processors.
 original_columns = train_dataset.column_names
