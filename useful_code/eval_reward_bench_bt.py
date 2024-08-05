@@ -51,7 +51,8 @@ rm_pipe = pipeline(
     truncation=True
 )
 pipe_kwargs = {
-    "return_all_scores": True,
+    # "return_all_scores": True,
+    "top_k": None,
     "function_to_apply": "none",
     "batch_size": 1,
 }
