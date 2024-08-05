@@ -259,9 +259,14 @@ def compute_metrics(eval_pred):
 
 class RewardTrainer(Trainer):
     def compute_loss(self, model, inputs, return_outputs=False):
-        rewards = model(
-            input_ids=inputs["input_ids"], attention_mask=inputs["attention_mask"]
-        )[0]
+        try:
+            rewards = model(
+                input_ids=inputs["input_ids"], attention_mask=inputs["attention_mask"]
+            )[0]
+        except Exception as e:
+            print(e)
+            print(inputs)
+            raise e
         bsz = rewards.size(0)
         jidx = torch.arange(0, bsz, 2)
         kidx = jidx + 1
