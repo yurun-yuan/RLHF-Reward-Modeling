@@ -1,8 +1,7 @@
 {
   "zero_optimization": {
     "stage": 1,
-    "overlap_comm": true,
-    "offload_optimizer": null
+    "overlap_comm": true
   },
   "bf16": {
     "enabled": "auto"
