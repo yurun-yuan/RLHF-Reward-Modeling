@@ -23,73 +23,21 @@ class ScriptArguments:
     """
     These arguments vary depending on how many GPUs you have, what their capacity and features are, and what size model you want to train.
     """
-    local_rank: Optional[int] = field(
-        default=-1, metadata={"help": "Used for multi-gpu"})
-
-    deepspeed: Optional[str] = field(
-        default=None,
-        metadata={
-            "help": "Path to deepspeed config if using deepspeed. You may need this if the model that you want to train doesn't fit on a single GPU."
-        },
-    )
-    per_device_train_batch_size: Optional[int] = field(default=1)
-    per_device_eval_batch_size: Optional[int] = field(default=1)
-    # for 8 GPU, the global batch size is 512
-    gradient_accumulation_steps: Optional[int] = field(default=64)
-    learning_rate: Optional[float] = field(default=2e-6)
-    weight_decay: Optional[float] = field(default=0.001)
     model_name: Optional[str] = field(
         default="meta-llama/Meta-Llama-3.1-8B-Instruct",
         metadata={
             "help": "The model that you want to train from the Hugging Face hub. E.g. gpt2, gpt2-xl, bert, etc."
         },
     )
-    bf16: Optional[bool] = field(
-        default=True,
-        metadata={
-            "help": "This essentially cuts the training time in half if you want to sacrifice a little precision and have a supported GPU."
-        },
-    )
-    num_train_epochs: Optional[int] = field(
-        default=1,
-        metadata={"help": "The number of training epochs for the reward model."},
-    )
     train_set_path: Optional[str] = field(
         default="hendrydong/preference_700K",
         metadata={"help": "The dir of the subset of the training data to use"},
     )
-    eval_set_path: Optional[str] = field(
-        default="hendrydong/preference_700K",
-        metadata={"help": "The dir of the subset of the eval data to use"},
-    )
-    output_path: Optional[str] = field(
-        default="./models/llama3_rm_test",
-        metadata={"help": "The dir for output model"},
-    )
-    gradient_checkpointing: Optional[bool] = field(
-        default=True,
-        metadata={"help": "Enables gradient checkpointing."},
-    )
-    optim: Optional[str] = field(
-        # default="adamw_hf",
-        default="paged_adamw_32bit",
-        # default="adamw_torch_fused",
-        metadata={"help": "The optimizer to use."},
-    )
-    lr_scheduler_type: Optional[str] = field(
-        default="cosine",
-        metadata={"help": "The lr scheduler"},
+    hf_dataset_output_path: Optional[str] = field(
+        default="",
+        metadata={"help": "HF repo for the dataset"},
     )
     max_length: Optional[int] = field(default=4096)
-
-    save_every_steps: Optional[int] = field(
-        default=999999,
-        metadata={"help": "Save the model every x steps"},
-    )
-    eval_every_steps: Optional[int] = field(
-        default=999999,
-        metadata={"help": "Eval the model every x steps"},
-    )
 
 
 parser = HfArgumentParser(ScriptArguments)
@@ -114,8 +62,7 @@ tokenizer.model_max_length = script_args.max_length
 
 # Get the dataset
 train_path = script_args.train_set_path
-eval_path = script_args.eval_set_path
-output_name = script_args.output_path
+output_name = script_args.hf_dataset_output_path
 
 
 def build_dataset(tokenizer, train_path, eval_path):
@@ -145,9 +92,9 @@ def build_dataset(tokenizer, train_path, eval_path):
     return train_dataset, eval_dataset
 
 
-train_dataset, eval_dataset = build_dataset(tokenizer, train_path, eval_path)
+train_dataset, eval_dataset = build_dataset(tokenizer, train_path, None)
 
-train_dataset.push_to_hub("RyanYr/preference_700K_llama31_tokenized")
+train_dataset.push_to_hub(output_name)
 
 train_dataset = train_dataset[:2]
 print(train_dataset)
