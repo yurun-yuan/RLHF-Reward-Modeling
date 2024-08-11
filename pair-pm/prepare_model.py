@@ -4,7 +4,7 @@ import os
 import sys
 import yaml
 
-name = 'meta-llama/Meta-Llama-3-8B-Instruct'
+name = '/staging/yyuan244/llama31_pretrain'
 tokenizer_name = name
 
 model = AutoModelForCausalLM.from_pretrained(
