@@ -83,7 +83,7 @@ eval_steps:
 eval_table_size:
 eval_table_max_new_tokens:
 save_steps: 100
-save_strategy: "step"
+save_strategy: "steps"
 save_total_limit: 1
 #save_safetensors: false
 debug:
