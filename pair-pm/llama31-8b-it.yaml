@@ -34,7 +34,7 @@ dataset_prepared_path: ~/prepare
 
 dataset_processes: 48
 #torch_compile: true
-sequence_len: 4096
+sequence_len: 2048
 sample_packing: true
 pad_to_sequence_len: true
 
