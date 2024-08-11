@@ -15,6 +15,7 @@ model = AutoModelForCausalLM.from_pretrained(
 tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
 tokenizer.pad_token = tokenizer.eos_token
 tokenizer.pad_token_id = tokenizer.eos_token_id
+tokenizer.add_special_tokens({'pad_token': '[PAD]'})
 model.config.pad_token_id = tokenizer.pad_token_id
 model.resize_token_embeddings(len(tokenizer))
 
