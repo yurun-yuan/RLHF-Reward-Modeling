@@ -22,7 +22,7 @@ wandb_watch:
 wandb_name: "llama31-8b-it_preference_data_v2_80K_wsafety"
 wandb_log_model:
 
-push_dataset_to_hub: "RyanYr/llama31-it-preference_data_v2_800K_wsafety"
+hub_model_id: "RyanYr/llama31-it-preference_data_v2_800K_wsafety"
 hub_strategy: "every_save"
 
 train_on_inputs: false
