@@ -24,7 +24,7 @@ class ScriptArguments:
     )
     preference_name_or_path: Optional[str] = field(
         default="",
-        metadata={"help": "the name of the gold reward model"},
+        metadata={"help": "the name of the preference model reward model"},
     )
     tokenizer_name: Optional[str] = field(
         default=None,
