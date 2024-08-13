@@ -30,6 +30,10 @@ class ScriptArguments:
         default="sfairXC/FsfairX-LLaMA3-RM-v0.1",
         metadata={"help": "the name of the tokenizer"},
     )
+    save_detailed_results: Optional[str] = field(
+        default=None,
+        metadata={"help": "the location of the detailed results"},
+    )
 
 
 parser = HfArgumentParser(ScriptArguments)
@@ -214,3 +218,6 @@ with open(record_dir, 'a') as f:
         print(f"{col}: {df_final[col].values[0]}")
 
         f.write(col + "\t" + str(df_final[col].values[0]) + "\n")
+
+if script_args.save_detailed_results:
+    df.to_parquet(script_args.save_detailed_results, index=False)
