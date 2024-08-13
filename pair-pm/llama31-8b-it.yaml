@@ -13,7 +13,7 @@ datasets:
     split: "train"
     train_on_split: "train"
 
-warmup_steps: 40
+# warmup_steps: 40
 val_set_size: 0.0
 output_dir: ~/output
 wandb_project: preference-models
