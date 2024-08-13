@@ -104,6 +104,7 @@ for i, example in enumerate(tqdm(ds)):
 
     row = {'id': example['id'], 'subset': example['subset']}
     row['correct'] = correct
+    row['prob_chosen'] = avg_prob_chosen
     df = df._append(row, ignore_index=True)
 
 categories = {
