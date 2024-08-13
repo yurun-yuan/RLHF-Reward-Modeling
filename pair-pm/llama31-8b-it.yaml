@@ -34,7 +34,7 @@ dataset_prepared_path: ~/prepare
 
 dataset_processes: 48
 #torch_compile: true
-sequence_len: 2048
+sequence_len: 4096
 sample_packing: true
 pad_to_sequence_len: true
 
@@ -52,25 +52,25 @@ lora_model_dir:
 
 gradient_checkpointing: True
 
-#warmup_ratio: 0.1
-gradient_accumulation_steps: 8
+warmup_ratio: 0.03
+gradient_accumulation_steps: 128
 micro_batch_size: 2
 num_epochs: 1
 #max_steps: 10
-optimizer: adamw_torch_fused
-#optimizer: paged_adamw_32bit
+# optimizer: adamw_torch_fused
+optimizer: paged_adamw_32bit
 #lr_scheduler: constant_with_warmup
 lr_scheduler: cosine
-learning_rate: 5.0e-6
+learning_rate: 2.0e-6
 
 weight_decay: 0.0
-max_grad_norm: 1.0
+max_grad_norm: 
 
 
 group_by_length: false
-bf16: auto
+bf16: true
 fp16: false
-tf32: true
+# tf32: true
 
 early_stopping_patience:
 local_rank:
