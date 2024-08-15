@@ -76,7 +76,7 @@ early_stopping_patience:
 local_rank:
 logging_steps: 2
 xformers_attention:
-flash_attention: false
+flash_attention: true
 
 
 eval_steps:
