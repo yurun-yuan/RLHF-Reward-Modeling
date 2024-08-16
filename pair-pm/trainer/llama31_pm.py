@@ -142,8 +142,13 @@ tokenizer.truncation_side = "left"
 tokenizer.model_max_length = script_args.max_length
 
 
-from dataset_builder import LABELS, token_id_A, token_id_B
-
+token_id_A = tokenizer.encode("A", add_special_tokens=False)
+token_id_B = tokenizer.encode("B", add_special_tokens=False)
+assert len(token_id_A) == 1 and len(token_id_B) == 1
+LABELS = {
+    "A": token_id_A[0],
+    "B": token_id_B[0]
+}
 
 
 # Get the dataset
