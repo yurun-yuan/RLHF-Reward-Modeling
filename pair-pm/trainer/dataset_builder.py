@@ -85,7 +85,7 @@ def build_dataset(tokenizer, train_path, eval_path):
         return {
             "input_ids": candidates["input_ids"],
             "attention_mask": candidates["attention_mask"],
-            "label": label_id
+            "labels": label_id
         }
 
     ds = load_dataset(train_path, split="train").shuffle(seed=42)
