@@ -184,7 +184,6 @@ training_args = TrainingArguments(
     deepspeed=script_args.deepspeed,
     local_rank=script_args.local_rank,
     remove_unused_columns=False,
-    label_names=[],
     bf16=script_args.bf16,
     logging_strategy="steps",
     logging_steps=3,
@@ -240,7 +239,7 @@ class RewardDataCollatorWithPadding:
         batch = {
             "input_ids": batch_input["input_ids"],
             "attention_mask": batch_input["attention_mask"],
-            "labels": [feature["labels"] for feature in features],
+            "labels": torch.tensor([feature["labels"] for feature in features]),
             "return_loss": True,
         }
         return batch
