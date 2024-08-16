@@ -80,7 +80,7 @@ def build_dataset(tokenizer, train_path, eval_path):
         message = sample['messages']
         candidates = message[0]
         label_id = LABELS[message[1]["content"]]
-        candidates = tokenizer.apply_chat_template(candidates, tokenize=False, add_generation_prompt=False).replace(tokenizer.bos_token, "")
+        candidates = tokenizer.apply_chat_template([candidates], tokenize=False, add_generation_prompt=False).replace(tokenizer.bos_token, "")
         candidates = tokenizer(candidates, truncation=True)
         return {
             "input_ids": candidates["input_ids"],
