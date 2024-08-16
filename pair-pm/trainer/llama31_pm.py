@@ -240,7 +240,7 @@ class RewardDataCollatorWithPadding:
         batch = {
             "input_ids": batch_input["input_ids"],
             "attention_mask": batch_input["attention_mask"],
-            "labels": features["label"],
+            "labels": [feature["labels"] for feature in features],
             "return_loss": True,
         }
         return batch
