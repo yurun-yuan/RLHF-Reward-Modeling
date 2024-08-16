@@ -264,7 +264,7 @@ class PreferenceTrainer(Trainer):
         logits = model(
             input_ids=inputs["input_ids"], attention_mask=inputs["attention_mask"]
         )[0]
-        logits = logits[:, -1, :].contiguous().view(-1, model.config.vocab_size)
+        logits = logits[:, -1, :].contiguous().view(-1, model.config["vocab_size"])
         labels = inputs["labels"].view(-1)
 
         loss_fct = nn.CrossEntropyLoss()
