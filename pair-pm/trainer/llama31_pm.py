@@ -228,7 +228,10 @@ class RewardDataCollatorWithPadding:
 
     def __call__(self, features: List[Dict[str, Any]]) -> Dict[str, Any]:
         batch_input = self.tokenizer.pad(
-            {"input_ids": features["input_ids"], "attention_mask": features["attention_mask"]},
+            {
+                "input_ids": [feature["input_ids"] for feature in features], 
+                "attention_mask": [feature["attention_mask"] for feature in features]
+            },
             padding=self.padding,
             max_length=self.max_length,
             pad_to_multiple_of=self.pad_to_multiple_of,
