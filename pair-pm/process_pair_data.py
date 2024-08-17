@@ -61,7 +61,7 @@ def process_example(example):
 
 all_datasets = []
 for ds_dir in all_dirs:
-    ds = load_dataset(ds_dir, split='train')
+    ds = load_dataset(ds_dir, split='filtered')
     ds_filtered = ds.filter(filter_example, num_proc=32)
     ds_new = ds_filtered.map(process_example,num_proc=32, remove_columns=ds.column_names, )
     all_datasets.append(ds_new)
@@ -78,4 +78,4 @@ else:
 combined_dataset = combined_dataset.shuffle(seed=42)
 
 
-DatasetDict({'train': combined_dataset}).push_to_hub(os.environ['HF_DATASET_ID'])
+DatasetDict({'filtered': combined_dataset}).push_to_hub(os.environ['HF_DATASET_ID'])
