@@ -5,12 +5,10 @@ import os
 
 # All the datasets should be pre-processed into standard format.
 all_dirs = [
-    "RLHFcollection/UltraFeedback-preference-standard",
-    "RLHFlow/HH-RLHF-Helpful-standard",
-    "RLHFlow/SHP-standard"
+    "allenai/reward-bench"
 ]
 
-tokenizer_path = "google/gemma-2b-it"
+tokenizer_path = "meta-llama/Meta-Llama-3.1-8B-Instruct"
 tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
 tokenizer_plain = AutoTokenizer.from_pretrained(tokenizer_path)
 tokenizer_plain.chat_template = "\n{% for message in messages %}{% if loop.index0 % 2 == 0 %}\n\n<turn> user\n {{ message['content'] }}{% else %}\n\n<turn> assistant\n {{ message['content'] }}{% endif %}{% endfor %}\n\n\n"
