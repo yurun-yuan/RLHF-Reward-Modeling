@@ -33,6 +33,10 @@ class ScriptArguments:
         default="RLHFlow/preference_data_v2_80K_wsafety",
         metadata={"help": "The dir of the subset of the training data to use"},
     )
+    split: Optional[str] = field(
+        default="train",
+        metadata={"help": "The split of the dataset to use"},
+    )
     hf_dataset_output_path: Optional[str] = field(
         default="RyanYr/RLHFlow-preference_data_v2_800K_wsafety-tokenized",
         metadata={"help": "HF repo for the dataset"},
@@ -88,7 +92,7 @@ def build_dataset(tokenizer, train_path, eval_path):
             "labels": label_id
         }
 
-    ds = load_dataset(train_path, split="train").shuffle(seed=42)
+    ds = load_dataset(train_path, split=script_args.split).shuffle(seed=42)
     ds = ds.map(tokenize, num_proc=NUM_PROC)
 
     train_dataset = ds
