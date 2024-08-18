@@ -5,10 +5,12 @@ import os
 
 # All the datasets should be pre-processed into standard format.
 all_dirs = [
-    "allenai/reward-bench"
+    "RLHFcollection/UltraFeedback-preference-standard",
+    "RLHFlow/HH-RLHF-Helpful-standard",
+    "RLHFlow/SHP-standard"
 ]
 
-tokenizer_path = "meta-llama/Meta-Llama-3.1-8B-Instruct"
+tokenizer_path = "google/gemma-2b-it"
 tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
 tokenizer_plain = AutoTokenizer.from_pretrained(tokenizer_path)
 tokenizer_plain.chat_template = "\n{% for message in messages %}{% if loop.index0 % 2 == 0 %}\n\n<turn> user\n {{ message['content'] }}{% else %}\n\n<turn> assistant\n {{ message['content'] }}{% endif %}{% endfor %}\n\n\n"
@@ -61,7 +63,7 @@ def process_example(example):
 
 all_datasets = []
 for ds_dir in all_dirs:
-    ds = load_dataset(ds_dir, split='filtered')
+    ds = load_dataset(ds_dir, split='train')
     ds_filtered = ds.filter(filter_example, num_proc=32)
     ds_new = ds_filtered.map(process_example,num_proc=32, remove_columns=ds.column_names, )
     all_datasets.append(ds_new)
@@ -78,4 +80,4 @@ else:
 combined_dataset = combined_dataset.shuffle(seed=42)
 
 
-DatasetDict({'filtered': combined_dataset}).push_to_hub(os.environ['HF_DATASET_ID'])
+DatasetDict({'train': combined_dataset}).push_to_hub(os.environ['HF_DATASET_ID'])
