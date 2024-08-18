@@ -155,7 +155,7 @@ eval_path = script_args.eval_set_path
 output_name = script_args.output_path
 
 train_dataset = load_dataset(train_path, split="train")
-eval_dataset = load_dataset(eval_path, split="filtered")
+eval_dataset = load_dataset(eval_path, split="train")
 print("Training set: ", len(train_dataset), " Eval set: ", len(eval_dataset))
 
 # Define the trainer
