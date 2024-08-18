@@ -66,7 +66,7 @@ class ScriptArguments:
         metadata={"help": "The dir of the subset of the training data to use"},
     )
     eval_set_path: Optional[str] = field(
-        default="RyanYr/RLHFlow-preference_data_v2_800K_wsafety-tokenized",
+        default="RyanYr/allenai-reward-bench-ABformat-tokenized",
         metadata={"help": "The dir of the subset of the eval data to use"},
     )
     local_model_path: Optional[str] = field(
@@ -133,11 +133,9 @@ tokenizer = AutoTokenizer.from_pretrained(tokenizer_name, use_fast = False)
 
 # Adjusted according to the base model
 # Need to do this for the models that don't have an official pad token.
-print("tokenizer.pad_token ", tokenizer.pad_token, "tokenizer.pad_token_id", tokenizer.pad_token_id)
 tokenizer.pad_token = tokenizer.eos_token
 tokenizer.pad_token_id = tokenizer.eos_token_id
 tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-print("tokenizer.padding_side", tokenizer.padding_side)
 tokenizer.truncation_side = "left"
 tokenizer.model_max_length = script_args.max_length
 
@@ -157,7 +155,7 @@ eval_path = script_args.eval_set_path
 output_name = script_args.output_path
 
 train_dataset = load_dataset(train_path, split="train")
-eval_dataset = train_dataset.select(range(500))
+eval_dataset = load_dataset(eval_path, split="filtered")
 print("Training set: ", len(train_dataset), " Eval set: ", len(eval_dataset))
 
 # Define the trainer
@@ -191,6 +189,7 @@ training_args = TrainingArguments(
     lr_scheduler_type=script_args.lr_scheduler_type,
     warmup_ratio=0.03,
     report_to='wandb',
+    include_inputs_for_metrics = True,
 )
 
 print(
@@ -248,13 +247,12 @@ class RewardDataCollatorWithPadding:
 # Define the trainer
 def compute_metrics(eval_pred):
     result = {}
-    logit_A = eval_pred.predictions[:, -1, token_id_A].item()
-    logit_B = eval_pred.predictions[:, -1, token_id_B].item()
-    pos_predictions_scores = eval_pred.predictions[0]
-    neg_predictions_scores = eval_pred.predictions[1]
-    # We assume that the first sample is preferred by default in groundtruth
-    result['accuracy'] = np.sum(
-        pos_predictions_scores > neg_predictions_scores) / len(pos_predictions_scores)
+    last_token_index = eval_pred.inputs["attention_mask"].sum(dim=1) - 1
+    logit_A = eval_pred.predictions[:, last_token_index, token_id_A]
+    logit_B = eval_pred.predictions[:, last_token_index, token_id_B]
+    preference = torch.sign(logit_A - logit_B)
+    labels = (eval_pred.label_ids == token_id_A).long() * 2 - 1
+    result["accuracy"] = (preference == labels).float().mean().item()
     return result
 
 
@@ -263,7 +261,9 @@ class PreferenceTrainer(Trainer):
         logits = model(
             input_ids=inputs["input_ids"], attention_mask=inputs["attention_mask"]
         )[0]
-        logits = logits[:, -1, :].contiguous().view(-1, model.vocab_size)
+        last_token_index = inputs["attention_mask"].sum(dim=1) - 1
+        assert last_token_index.shape == (inputs["input_ids"].shape[0],), f"{last_token_index.shape} != {(inputs['input_ids'].shape[0],)}"
+        logits = logits[:, last_token_index, :].contiguous().view(-1, model.vocab_size)
         labels = inputs["labels"].view(-1)
 
         loss_fct = nn.CrossEntropyLoss()
